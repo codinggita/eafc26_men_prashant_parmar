@@ -9,7 +9,8 @@ const {
   getOldestPlayers,
   getSkillDistribution,
   getFootDistribution,
-  getNationAnalytics
+  getNationAnalytics,
+  getCategoryCounts
 } = require('../controllers/statsController');
 
 const router = express.Router();
@@ -24,6 +25,7 @@ router.get('/analytics/oldest', getOldestPlayers);
 router.get('/analytics/skills', getSkillDistribution);
 router.get('/analytics/foot', getFootDistribution);
 router.get('/analytics/nations', getNationAnalytics);
+router.get('/:category/count', getCategoryCounts);
 
 
 module.exports = router;

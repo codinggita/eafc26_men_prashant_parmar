@@ -26,7 +26,11 @@ const {
   getTopDefenders,
   getTopPhysical,
   getRecentPlayers,
-  getPlayerPerformance
+  getPlayerPerformance,
+  bulkUpdatePlayers,
+  bulkDeletePlayers,
+  getTopFinishers,
+  getRandomPlayer
 } = require('../controllers/playerController');
 
 const router = express.Router();
@@ -56,12 +60,19 @@ router.route('/top-dribblers').get(getTopDribblers);
 router.route('/top-passers').get(getTopPassers);
 router.route('/top-defenders').get(getTopDefenders);
 router.route('/top-physical').get(getTopPhysical);
+router.route('/top-finishers').get(getTopFinishers);
 router.route('/recent').get(getRecentPlayers);
+router.route('/random').get(getRandomPlayer);
 router.route('/performance/:id').get(getPlayerPerformance);
-
 
 router.route('/bulk-create')
   .post(protect, authorize('admin'), bulkCreatePlayers);
+
+router.route('/bulk-update')
+  .patch(protect, authorize('admin'), bulkUpdatePlayers);
+
+router.route('/bulk-delete')
+  .delete(protect, authorize('admin'), bulkDeletePlayers);
 
 router.route('/:id')
   .get(getPlayer)

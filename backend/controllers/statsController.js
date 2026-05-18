@@ -169,6 +169,34 @@ exports.getFootDistribution = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: distribution });
 });
 
+// @desc    Get counts by category (team, league, nation)
+// @route   GET /api/v1/stats/:category/count
+// @access  Public
+exports.getCategoryCounts = asyncHandler(async (req, res, next) => {
+  const { category } = req.params;
+  const allowedCategories = ['team', 'league', 'nation'];
+
+  if (!allowedCategories.includes(category)) {
+    return res.status(400).json({ success: false, message: 'Invalid category' });
+  }
+
+  const counts = await Player.aggregate([
+    { $match: { isDeleted: false } },
+    {
+      $group: {
+        _id: `$${category}`,
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { count: -1 } }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: counts
+  });
+});
+
 // @desc    Get nation distribution (top nations)
 // @route   GET /api/v1/stats/analytics/nations
 // @access  Public

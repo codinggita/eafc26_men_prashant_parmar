@@ -357,12 +357,47 @@ exports.getTopPhysical = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, count: players.length, data: players });
 });
 
-// @desc    Fetch recently added player records
-// @route   GET /api/v1/players/recent
+// @desc    Bulk update players
+// @route   PATCH /api/v1/players/bulk-update
+// @access  Private/Admin
+exports.bulkUpdatePlayers = asyncHandler(async (req, res, next) => {
+  const { ids, data } = req.body;
+  const players = await Player.updateMany(
+    { _id: { $in: ids }, isDeleted: false },
+    { $set: data },
+    { runValidators: true }
+  );
+  res.status(200).json({ success: true, count: players.modifiedCount });
+});
+
+// @desc    Bulk delete players (Soft Delete)
+// @route   DELETE /api/v1/players/bulk-delete
+// @access  Private/Admin
+exports.bulkDeletePlayers = asyncHandler(async (req, res, next) => {
+  const { ids } = req.body;
+  await Player.updateMany(
+    { _id: { $in: ids } },
+    { $set: { isDeleted: true } }
+  );
+  res.status(200).json({ success: true, message: 'Players deleted successfully' });
+});
+
+// @desc    Fetch best finishing players
+// @route   GET /api/v1/players/top-finishers
 // @access  Public
-exports.getRecentPlayers = asyncHandler(async (req, res, next) => {
-  const players = await Player.find({ isDeleted: false }).sort('-createdAt').limit(10);
+exports.getTopFinishers = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-shooting').limit(10);
   res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch random football player record
+// @route   GET /api/v1/players/random
+// @access  Public
+exports.getRandomPlayer = asyncHandler(async (req, res, next) => {
+  const count = await Player.countDocuments({ isDeleted: false });
+  const random = Math.floor(Math.random() * count);
+  const player = await Player.findOne({ isDeleted: false }).skip(random);
+  res.status(200).json({ success: true, data: player });
 });
 
 // @desc    Fetch player performance analytics
