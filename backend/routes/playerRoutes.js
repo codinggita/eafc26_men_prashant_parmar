@@ -25,7 +25,8 @@ const {
   getTopPassers,
   getTopDefenders,
   getTopPhysical,
-  getRecentPlayers
+  getRecentPlayers,
+  getPlayerPerformance
 } = require('../controllers/playerController');
 
 const router = express.Router();
@@ -56,6 +57,7 @@ router.route('/top-passers').get(getTopPassers);
 router.route('/top-defenders').get(getTopDefenders);
 router.route('/top-physical').get(getTopPhysical);
 router.route('/recent').get(getRecentPlayers);
+router.route('/performance/:id').get(getPlayerPerformance);
 
 
 router.route('/bulk-create')

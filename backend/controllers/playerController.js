@@ -365,3 +365,29 @@ exports.getRecentPlayers = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, count: players.length, data: players });
 });
 
+// @desc    Fetch player performance analytics
+// @route   GET /api/v1/players/performance/:id
+// @access  Public
+exports.getPlayerPerformance = asyncHandler(async (req, res, next) => {
+  const player = await Player.findById(req.params.id);
+
+  if (!player || player.isDeleted) {
+    return res.status(404).json({ success: false, message: 'Player not found' });
+  }
+
+  // Calculate some basic performance metrics for demonstration
+  const performance = {
+    attackingScore: (player.shooting + player.pace + player.dribbling) / 3,
+    defendingScore: (player.defending + player.physical) / 2,
+    playmakingScore: (player.passing + player.dribbling) / 2
+  };
+
+  res.status(200).json({
+    success: true,
+    data: {
+      player: { name: player.name, ovr: player.ovr },
+      performance
+    }
+  });
+});
+

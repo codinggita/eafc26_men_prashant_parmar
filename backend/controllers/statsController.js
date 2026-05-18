@@ -103,6 +103,91 @@ exports.getTopTeams = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc    Compare two football players
+// @route   GET /api/v1/stats/compare/:p1/:p2
+// @access  Public
+exports.comparePlayers = asyncHandler(async (req, res, next) => {
+  const player1 = await Player.findById(req.params.p1);
+  const player2 = await Player.findById(req.params.p2);
+
+  if (!player1 || !player2 || player1.isDeleted || player2.isDeleted) {
+    return res.status(404).json({ success: false, message: 'One or both players not found' });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: { player1, player2 }
+  });
+});
+
+// @desc    Get youngest players analytics
+// @route   GET /api/v1/stats/analytics/youngest
+// @access  Public
+exports.getYoungestPlayers = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('age').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Get oldest players analytics
+// @route   GET /api/v1/stats/analytics/oldest
+// @access  Public
+exports.getOldestPlayers = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-age').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Get skill distribution
+// @route   GET /api/v1/stats/analytics/skills
+// @access  Public
+exports.getSkillDistribution = asyncHandler(async (req, res, next) => {
+  const distribution = await Player.aggregate([
+    { $match: { isDeleted: false } },
+    {
+      $group: {
+        _id: '$skillMoves',
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { _id: -1 } }
+  ]);
+  res.status(200).json({ success: true, data: distribution });
+});
+
+// @desc    Get foot distribution
+// @route   GET /api/v1/stats/analytics/foot
+// @access  Public
+exports.getFootDistribution = asyncHandler(async (req, res, next) => {
+  const distribution = await Player.aggregate([
+    { $match: { isDeleted: false } },
+    {
+      $group: {
+        _id: '$preferredFoot',
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+  res.status(200).json({ success: true, data: distribution });
+});
+
+// @desc    Get nation distribution (top nations)
+// @route   GET /api/v1/stats/analytics/nations
+// @access  Public
+exports.getNationAnalytics = asyncHandler(async (req, res, next) => {
+  const nations = await Player.aggregate([
+    { $match: { isDeleted: false } },
+    {
+      $group: {
+        _id: '$nation',
+        avgRating: { $avg: '$ovr' },
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { count: -1 } },
+    { $limit: 15 }
+  ]);
+  res.status(200).json({ success: true, data: nations });
+});
+
 // @desc    Get distribution of playstyles
 // @route   GET /api/v1/stats/playstyles
 // @access  Public
