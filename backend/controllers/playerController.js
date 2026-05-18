@@ -1,7 +1,7 @@
 const Player = require('../models/Player');
 const asyncHandler = require('../middlewares/asyncHandler');
 
-// @desc    Fetch all football player records (with filtering, sorting, pagination)
+// @desc    Fetch all football player records (with advanced filtering, sorting, pagination)
 // @route   GET /api/v1/players
 // @access  Public
 exports.getPlayers = asyncHandler(async (req, res, next) => {
@@ -11,27 +11,45 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
   const reqQuery = { ...req.query };
 
   // Fields to exclude from filtering
-  const removeFields = ['select', 'sort', 'page', 'limit', 'search'];
+  const removeFields = ['select', 'sort', 'page', 'limit', 'search', 'q'];
   removeFields.forEach(param => delete reqQuery[param]);
 
-  // Create query string
-  let queryStr = JSON.stringify(reqQuery);
+  // Handle specialized numeric filters (ovr, pace, shooting, etc)
+  const numericFilters = ['ovr', 'pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical', 'age', 'skillMoves', 'weakFoot'];
+  
+  numericFilters.forEach(filter => {
+    if (reqQuery[filter]) {
+      // If it's just a number, convert to numeric
+      if (!isNaN(reqQuery[filter])) {
+        reqQuery[filter] = Number(reqQuery[filter]);
+      }
+    }
+    
+    // Handle min/max filters (e.g., minPace=90)
+    const minFilter = `min${filter.charAt(0).toUpperCase() + filter.slice(1)}`;
+    if (req.query[minFilter]) {
+      reqQuery[filter] = { ...reqQuery[filter], $gte: Number(req.query[minFilter]) };
+    }
+  });
 
-  // Create operators ($gt, $gte, etc)
+  // Create query string for operators ($gt, $gte, etc)
+  let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
   // Finding resource
   query = Player.find(JSON.parse(queryStr)).where({ isDeleted: false });
 
-  // Search by keyword
-  if (req.query.search) {
-    const search = req.query.search;
+  // Search by keyword (q or search param)
+  const search = req.query.q || req.query.search;
+  if (search) {
     query = query.find({
       $or: [
         { name: { $regex: search, $options: 'i' } },
         { team: { $regex: search, $options: 'i' } },
         { league: { $regex: search, $options: 'i' } },
-        { nation: { $regex: search, $options: 'i' } }
+        { nation: { $regex: search, $options: 'i' } },
+        { position: { $regex: search, $options: 'i' } },
+        { playstyles: { $regex: search, $options: 'i' } }
       ]
     });
   }
@@ -47,7 +65,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
     const sortBy = req.query.sort.split(',').join(' ');
     query = query.sort(sortBy);
   } else {
-    query = query.sort('-createdAt');
+    query = query.sort('-ovr'); // Default sort by highest rating
   }
 
   // Pagination
@@ -55,7 +73,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
-  const total = await Player.countDocuments({ isDeleted: false });
+  const total = await Player.countDocuments({ isDeleted: false, ...JSON.parse(queryStr) });
 
   query = query.skip(startIndex).limit(limit);
 
@@ -64,24 +82,13 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 
   // Pagination result
   const pagination = {};
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit
-    };
-  }
-
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit
-    };
-  }
+  if (endIndex < total) pagination.next = { page: page + 1, limit };
+  if (startIndex > 0) pagination.prev = { page: page - 1, limit };
 
   res.status(200).json({
     success: true,
     count: players.length,
+    total,
     pagination,
     data: players
   });
@@ -228,11 +235,133 @@ exports.getPlayersByTeam = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, count: players.length, data: players });
 });
 
+// @desc    Check whether player exists or not
+// @route   GET /api/v1/players/exists/:id
+// @access  Public
+exports.checkPlayerExists = asyncHandler(async (req, res, next) => {
+  const exists = await Player.exists({ _id: req.params.id, isDeleted: false });
+  res.status(200).json({ success: true, exists: !!exists });
+});
+
+// @desc    Fetch player details using player name
+// @route   GET /api/v1/players/name/:name
+// @access  Public
+exports.getPlayerByName = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ name: { $regex: req.params.name, $options: 'i' }, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch player using global rank
+// @route   GET /api/v1/players/rank/:rank
+// @access  Public
+exports.getPlayerByRank = asyncHandler(async (req, res, next) => {
+  const player = await Player.findOne({ rank: req.params.rank, isDeleted: false });
+  if (!player) return res.status(404).json({ success: false, message: 'Player with this rank not found' });
+  res.status(200).json({ success: true, data: player });
+});
+
+// @desc    Fetch players by league
+// @route   GET /api/v1/players/league/:league
+// @access  Public
+exports.getPlayersByLeague = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ league: { $regex: req.params.league, $options: 'i' }, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players using playing position
+// @route   GET /api/v1/players/position/:position
+// @access  Public
+exports.getPlayersByPosition = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ position: req.params.position.toUpperCase(), isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players using age
+// @route   GET /api/v1/players/age/:age
+// @access  Public
+exports.getPlayersByAge = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ age: req.params.age, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
 // @desc    Fetch players by nation
 // @route   GET /api/v1/players/nation/:nation
 // @access  Public
 exports.getPlayersByNation = asyncHandler(async (req, res, next) => {
   const players = await Player.find({ nation: req.params.nation, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players by play style
+// @route   GET /api/v1/players/playstyle/:style
+// @access  Public
+exports.getPlayersByPlaystyle = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ playstyles: { $regex: req.params.style, $options: 'i' }, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players by preferred foot
+// @route   GET /api/v1/players/preferred-foot/:foot
+// @access  Public
+exports.getPlayersByFoot = asyncHandler(async (req, res, next) => {
+  const foot = req.params.foot.charAt(0).toUpperCase() + req.params.foot.slice(1).toLowerCase();
+  const players = await Player.find({ preferredFoot: foot, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players by alternative positions
+// @route   GET /api/v1/players/alternative-position/:position
+// @access  Public
+exports.getPlayersByAltPosition = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ alternativePositions: req.params.position.toUpperCase(), isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch fastest players (alias for top-paced)
+// @route   GET /api/v1/players/top-paced
+// @access  Public
+exports.getTopPaced = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-pace').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch best dribbling players
+// @route   GET /api/v1/players/top-dribblers
+// @access  Public
+exports.getTopDribblers = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-dribbling').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch best passing players
+// @route   GET /api/v1/players/top-passers
+// @access  Public
+exports.getTopPassers = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-passing').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch best defenders
+// @route   GET /api/v1/players/top-defenders
+// @access  Public
+exports.getTopDefenders = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-defending').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch strongest physical players
+// @route   GET /api/v1/players/top-physical
+// @access  Public
+exports.getTopPhysical = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-physical').limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch recently added player records
+// @route   GET /api/v1/players/recent
+// @access  Public
+exports.getRecentPlayers = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false }).sort('-createdAt').limit(10);
   res.status(200).json({ success: true, count: players.length, data: players });
 });
 
