@@ -199,3 +199,40 @@ exports.bulkCreatePlayers = asyncHandler(async (req, res, next) => {
     data: players
   });
 });
+
+// @desc    Fetch highest rated players
+// @route   GET /api/v1/players/top-rated
+// @access  Public
+exports.getTopRated = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false })
+    .sort('-ovr')
+    .limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch fastest players
+// @route   GET /api/v1/players/top-paced
+// @access  Public
+exports.getTopPaced = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ isDeleted: false })
+    .sort('-pace')
+    .limit(10);
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players by team
+// @route   GET /api/v1/players/team/:team
+// @access  Public
+exports.getPlayersByTeam = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ team: req.params.team, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+
+// @desc    Fetch players by nation
+// @route   GET /api/v1/players/nation/:nation
+// @access  Public
+exports.getPlayersByNation = asyncHandler(async (req, res, next) => {
+  const players = await Player.find({ nation: req.params.nation, isDeleted: false });
+  res.status(200).json({ success: true, count: players.length, data: players });
+});
+

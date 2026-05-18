@@ -79,3 +79,49 @@ exports.getPositionDistribution = asyncHandler(async (req, res, next) => {
     data: distribution
   });
 });
+
+// @desc    Get top teams by average rating
+// @route   GET /api/v1/stats/top-teams
+// @access  Public
+exports.getTopTeams = asyncHandler(async (req, res, next) => {
+  const teams = await Player.aggregate([
+    { $match: { isDeleted: false } },
+    {
+      $group: {
+        _id: '$team',
+        avgRating: { $avg: '$ovr' },
+        playerCount: { $sum: 1 }
+      }
+    },
+    { $sort: { avgRating: -1 } },
+    { $limit: 10 }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: teams
+  });
+});
+
+// @desc    Get distribution of playstyles
+// @route   GET /api/v1/stats/playstyles
+// @access  Public
+exports.getPlaystyleDistribution = asyncHandler(async (req, res, next) => {
+  const distribution = await Player.aggregate([
+    { $match: { isDeleted: false } },
+    { $unwind: '$playstyles' },
+    {
+      $group: {
+        _id: '$playstyles',
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { count: -1 } }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: distribution
+  });
+});
+

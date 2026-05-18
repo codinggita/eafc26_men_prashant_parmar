@@ -6,7 +6,11 @@ const {
   updatePlayer,
   patchPlayer,
   deletePlayer,
-  bulkCreatePlayers
+  bulkCreatePlayers,
+  getTopRated,
+  getTopPaced,
+  getPlayersByTeam,
+  getPlayersByNation
 } = require('../controllers/playerController');
 
 const router = express.Router();
@@ -16,6 +20,12 @@ const { protect, authorize } = require('../middlewares/auth');
 router.route('/')
   .get(getPlayers)
   .post(protect, authorize('admin'), createPlayer);
+
+router.route('/top-rated').get(getTopRated);
+router.route('/top-paced').get(getTopPaced);
+router.route('/team/:team').get(getPlayersByTeam);
+router.route('/nation/:nation').get(getPlayersByNation);
+
 
 router.route('/bulk-create')
   .post(protect, authorize('admin'), bulkCreatePlayers);
