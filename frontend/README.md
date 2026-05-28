@@ -1,16 +1,67 @@
-# React + Vite
+# EA Sports FC 26 - Frontend Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
+This is a full-stack dashboard project built for the EA Sports FC 26 Men's Football Dataset. The frontend is built using **React (Vite)**, **Tailwind CSS v4**, and **Material UI (MUI)**, integrated with a **MongoDB + Express** backend.
 
-Currently, two official plugins are available:
+## Tech Stack
+- **Framework**: React 19 (Vite)
+- **Styling**: Tailwind CSS v4, Material UI v6
+- **State Management**: Redux Toolkit
+- **Routing**: React Router v7
+- **API Communication**: Axios
+- **Form Handling**: Formik & Yup
+- **Charts**: Recharts
+- **Notifications**: React Hot Toast
+- **SEO**: React Helmet Async
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- **Authentication**: JWT-based Login and Registration with role-based access control (Admin/User).
+- **Dashboard Layout**: Responsive sidebar and top navbar with theme toggle (Light/Dark mode).
+- **Players Management**: Full CRUD operations for football player records, including search and server-side pagination.
+- **Users Management**: Admin-only dashboard to manage user accounts and roles.
+- **Analytics**: Data visualization using MongoDB aggregations for position distribution, nation analytics, and top teams.
+- **Profile Management**: User profile screen with account details.
+- **SEO Implementation**: Dynamic page titles and meta tags for all routes.
 
-## React Compiler
+## Folder Structure
+```
+frontend/
+├── src/
+│   ├── components/      # Reusable UI components
+│   ├── features/        # Redux slices (Auth, Players, UI, Users)
+│   ├── layouts/         # Dashboard and Public layouts
+│   ├── pages/           # Screen components (Dashboard, Login, Players, etc.)
+│   ├── services/        # API layer (Axios instance and service files)
+│   ├── store/           # Redux store configuration
+│   ├── theme/           # MUI theme customization
+│   ├── App.jsx          # Main routing and app initialization
+│   ├── index.css        # Tailwind v4 imports and global styles
+│   └── main.jsx         # Entry point
+├── .gitignore
+├── package.json
+└── vite.config.js
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup Instructions
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Build for production:
+   ```bash
+   npm run build
+   ```
 
-## Expanding the ESLint configuration
+## API Configuration
+The frontend uses a proxy configured in `vite.config.js` to communicate with the backend at `http://localhost:5000`. The base API URL is `/api/v1`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+*Developed by Prashant Parmar - 2026*

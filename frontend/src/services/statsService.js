@@ -25,12 +25,18 @@ const getCategoryCounts = async (category) => {
   return response.data;
 };
 
+const comparePlayers = async (id1, id2) => {
+  const response = await api.get(`/stats/compare/${id1}/${id2}`);
+  return response.data;
+};
+
 const statsService = {
   getPlayerStats,
   getPositionDistribution,
   getTopTeams,
   getNationAnalytics,
   getCategoryCounts,
+  comparePlayers,
 };
 
 export default statsService;

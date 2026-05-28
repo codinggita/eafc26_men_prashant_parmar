@@ -22,6 +22,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import SoccerIcon from '@mui/icons-material/SportsSoccer';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
@@ -55,6 +56,7 @@ const DashboardLayout = ({ children }) => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Users Management', icon: <PeopleIcon />, path: '/admin/users' },
     { text: 'Players Dataset', icon: <SoccerIcon />, path: '/players' },
+    { text: 'Compare Players', icon: <CompareArrowsIcon />, path: '/compare' },
     { text: 'Analytics', icon: <ChartIcon />, path: '/analytics' },
     { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },

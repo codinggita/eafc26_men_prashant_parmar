@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet-async';
 import {
   Box,
   Typography,
@@ -105,6 +106,9 @@ const UsersManagement = () => {
 
   return (
     <Box className="animate-fade-in">
+      <Helmet>
+        <title>Users Management | EA Sports FC 26</title>
+      </Helmet>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
           Users Management
