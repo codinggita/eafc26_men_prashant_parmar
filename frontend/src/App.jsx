@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
+import PlayersList from './pages/PlayersList';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -70,7 +71,7 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardLayout>
-                <div>Players Dataset Placeholder</div>
+                <PlayersList />
               </DashboardLayout>
             </ProtectedRoute>
           } 
