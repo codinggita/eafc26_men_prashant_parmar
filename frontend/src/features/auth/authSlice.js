@@ -5,6 +5,7 @@ const initialState = {
   token: localStorage.getItem('token'),
   isAuthenticated: !!localStorage.getItem('token'),
   loading: false,
+  isInitializing: !!localStorage.getItem('token'),
   error: null,
 };
 
@@ -31,11 +32,13 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      state.isInitializing = false;
       localStorage.removeItem('token');
     },
     setUser: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
+      state.isInitializing = false;
     },
   },
 });

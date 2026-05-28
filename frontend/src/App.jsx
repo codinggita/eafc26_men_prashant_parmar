@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import PlayersList from './pages/PlayersList';
+import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,7 +21,7 @@ function App() {
       if (token) {
         try {
           const response = await api.get('/auth/me');
-          dispatch(setUser(response.data.user));
+          dispatch(setUser(response.data.data));
         } catch (error) {
           dispatch(logout());
         }
@@ -82,7 +83,7 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardLayout>
-                <div>Analytics Placeholder</div>
+                <Analytics />
               </DashboardLayout>
             </ProtectedRoute>
           } 

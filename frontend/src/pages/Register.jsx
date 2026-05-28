@@ -50,15 +50,24 @@ const Register = () => {
       try {
         const { confirmPassword, ...registerData } = values;
         const response = await api.post('/auth/register', registerData);
+        const { token } = response.data;
+
+        // Save token to localStorage immediately
+        localStorage.setItem('token', token);
+
+        // Fetch user profile
+        const userResponse = await api.get('/auth/me');
+
         dispatch(loginSuccess({
-          user: response.data.user,
-          token: response.data.token
+          user: userResponse.data.data,
+          token: token
         }));
+        
         toast.success('Registration successful!');
         navigate('/');
       } catch (error) {
-        dispatch(loginFailure(error.message || 'Registration failed'));
-        toast.error(error.message || 'Registration failed');
+        dispatch(loginFailure(error.error || error.message || 'Registration failed'));
+        toast.error(error.error || error.message || 'Registration failed');
       }
     },
   });

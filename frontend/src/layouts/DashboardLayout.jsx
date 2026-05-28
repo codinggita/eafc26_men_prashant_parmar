@@ -9,6 +9,7 @@ import {
   Drawer, 
   List, 
   ListItem, 
+  ListItemButton,
   ListItemIcon, 
   ListItemText, 
   Divider,
@@ -148,34 +149,34 @@ const DashboardLayout = ({ children }) => {
         <Divider />
         <List>
           {menuItems.map((item) => (
-            <ListItem
-              button
-              key={item.text}
-              onClick={() => navigate(item.path)}
-              selected={location.pathname === item.path}
-              sx={{
-                minHeight: 48,
-                justifyContent: sidebarOpen ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+            <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+                onClick={() => navigate(item.path)}
+                selected={location.pathname === item.path}
                 sx={{
-                  minWidth: 0,
-                  mr: sidebarOpen ? 3 : 'auto',
-                  justifyContent: 'center',
-                  color: location.pathname === item.path ? 'primary.main' : 'inherit',
+                  minHeight: 48,
+                  justifyContent: sidebarOpen ? 'initial' : 'center',
+                  px: 2.5,
                 }}
               >
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.text} 
-                sx={{ 
-                  opacity: sidebarOpen ? 1 : 0,
-                  color: location.pathname === item.path ? 'primary.main' : 'inherit',
-                }} 
-              />
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: sidebarOpen ? 3 : 'auto',
+                    justifyContent: 'center',
+                    color: location.pathname === item.path ? 'primary.main' : 'inherit',
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text} 
+                  sx={{ 
+                    opacity: sidebarOpen ? 1 : 0,
+                    color: location.pathname === item.path ? 'primary.main' : 'inherit',
+                  }} 
+                />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>

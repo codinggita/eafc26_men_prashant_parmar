@@ -21,7 +21,7 @@ const PlayerModal = ({ open, handleClose, player, onSubmit, loading }) => {
     initialValues: {
       name: player?.name || '',
       rank: player?.rank || '',
-      overall: player?.overall || '',
+      ovr: player?.ovr || '',
       position: player?.position || '',
       team: player?.team || '',
       nation: player?.nation || '',
@@ -32,7 +32,7 @@ const PlayerModal = ({ open, handleClose, player, onSubmit, loading }) => {
     validationSchema: Yup.object({
       name: Yup.string().required('Required'),
       rank: Yup.number().required('Required').positive().integer(),
-      overall: Yup.number().required('Required').min(1).max(99),
+      ovr: Yup.number().required('Required').min(1).max(99),
       position: Yup.string().required('Required'),
       team: Yup.string().required('Required'),
       nation: Yup.string().required('Required'),
@@ -75,13 +75,13 @@ const PlayerModal = ({ open, handleClose, player, onSubmit, loading }) => {
             <Grid item xs={12} sm={4}>
               <TextField
                 fullWidth
-                name="overall"
+                name="ovr"
                 label="OVR"
                 type="number"
-                value={formik.values.overall}
+                value={formik.values.ovr}
                 onChange={formik.handleChange}
-                error={formik.touched.overall && Boolean(formik.errors.overall)}
-                helperText={formik.touched.overall && formik.errors.overall}
+                error={formik.touched.ovr && Boolean(formik.errors.ovr)}
+                helperText={formik.touched.ovr && formik.errors.ovr}
               />
             </Grid>
             <Grid item xs={12} sm={4}>

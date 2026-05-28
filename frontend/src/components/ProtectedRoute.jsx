@@ -2,10 +2,10 @@ import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, roles = [] }) => {
-  const { isAuthenticated, user, loading } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, loading, isInitializing } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  if (loading) {
+  if (isInitializing || loading) {
     return null; // Or a loading spinner
   }
 

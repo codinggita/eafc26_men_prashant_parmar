@@ -172,8 +172,8 @@ const PlayersList = () => {
                   <TableCell sx={{ fontWeight: 'medium' }}>{player.name}</TableCell>
                   <TableCell>
                     <Chip 
-                      label={player.overall} 
-                      color={player.overall >= 85 ? "success" : "primary"}
+                      label={player.ovr} 
+                      color={player.ovr >= 85 ? "success" : "primary"}
                       size="small"
                       sx={{ fontWeight: 'bold' }}
                     />

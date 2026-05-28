@@ -42,15 +42,24 @@ const Login = () => {
       dispatch(loginStart());
       try {
         const response = await api.post('/auth/login', values);
+        const { token } = response.data;
+        
+        // Save token to localStorage immediately so subsequent requests use it
+        localStorage.setItem('token', token);
+        
+        // Fetch user profile
+        const userResponse = await api.get('/auth/me');
+        
         dispatch(loginSuccess({
-          user: response.data.user,
-          token: response.data.token
+          user: userResponse.data.data,
+          token: token
         }));
+        
         toast.success('Login successful!');
         navigate('/');
       } catch (error) {
-        dispatch(loginFailure(error.message || 'Login failed'));
-        toast.error(error.message || 'Invalid credentials');
+        dispatch(loginFailure(error.error || error.message || 'Login failed'));
+        toast.error(error.error || error.message || 'Invalid credentials');
       }
     },
   });

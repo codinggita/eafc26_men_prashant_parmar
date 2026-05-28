@@ -7,7 +7,7 @@ export const fetchPlayers = createAsyncThunk(
     try {
       return await playerService.getPlayers(params);
     } catch (error) {
-      return rejectWithValue(error.message || 'Failed to fetch players');
+      return rejectWithValue(error.error || error.message || 'Failed to fetch players');
     }
   }
 );
@@ -18,7 +18,7 @@ export const addPlayer = createAsyncThunk(
     try {
       return await playerService.createPlayer(playerData);
     } catch (error) {
-      return rejectWithValue(error.message || 'Failed to add player');
+      return rejectWithValue(error.error || error.message || 'Failed to add player');
     }
   }
 );
@@ -29,7 +29,7 @@ export const updatePlayer = createAsyncThunk(
     try {
       return await playerService.updatePlayer(id, playerData);
     } catch (error) {
-      return rejectWithValue(error.message || 'Failed to update player');
+      return rejectWithValue(error.error || error.message || 'Failed to update player');
     }
   }
 );
@@ -41,7 +41,7 @@ export const deletePlayer = createAsyncThunk(
       await playerService.deletePlayer(id);
       return id;
     } catch (error) {
-      return rejectWithValue(error.message || 'Failed to delete player');
+      return rejectWithValue(error.error || error.message || 'Failed to delete player');
     }
   }
 );
@@ -80,7 +80,10 @@ const playerSlice = createSlice({
       .addCase(fetchPlayers.fulfilled, (state, action) => {
         state.loading = false;
         state.players = action.payload.data;
-        state.pagination = action.payload.pagination;
+        state.pagination = {
+          ...state.pagination,
+          total: action.payload.total,
+        };
       })
       .addCase(fetchPlayers.rejected, (state, action) => {
         state.loading = false;
