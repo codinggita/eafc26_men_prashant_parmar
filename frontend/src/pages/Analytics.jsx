@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Box,
   Typography,
@@ -72,6 +73,9 @@ const Analytics = () => {
 
   return (
     <Box className="animate-fade-in">
+      <Helmet>
+        <title>Analytics | EA Sports FC 26</title>
+      </Helmet>
       <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 4 }}>
         Analytics Dashboard
       </Typography>

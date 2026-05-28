@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet-async';
 import {
   Grid,
   Paper,
@@ -74,6 +75,9 @@ const Dashboard = () => {
 
   return (
     <Box className="animate-fade-in">
+      <Helmet>
+        <title>Dashboard | EA Sports FC 26</title>
+      </Helmet>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 4 }}>
         Welcome, {user?.name}!
       </Typography>

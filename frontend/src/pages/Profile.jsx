@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet-async';
 import {
   Box,
   Typography,
@@ -22,6 +23,9 @@ const Profile = () => {
 
   return (
     <Box className="animate-fade-in">
+      <Helmet>
+        <title>Profile | EA Sports FC 26</title>
+      </Helmet>
       <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 4 }}>
         User Profile
       </Typography>

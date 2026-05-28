@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   Box, 
   Paper, 
@@ -66,6 +67,9 @@ const Login = () => {
 
   return (
     <Container component="main" maxWidth="xs">
+      <Helmet>
+        <title>Sign In | EA Sports FC 26</title>
+      </Helmet>
       <Box
         sx={{
           marginTop: 8,
