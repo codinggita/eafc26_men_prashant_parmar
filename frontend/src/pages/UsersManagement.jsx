@@ -93,8 +93,7 @@ const UsersManagement = () => {
         await api.put(`/admin/users/${editingUser._id}`, formData);
         toast.success('User updated successfully');
       } else {
-        // Registration is handled via the public auth endpoint
-        await api.post('/auth/register', formData);
+        await api.post('/admin/users', formData);
         toast.success('User created successfully');
       }
       handleCloseModal();

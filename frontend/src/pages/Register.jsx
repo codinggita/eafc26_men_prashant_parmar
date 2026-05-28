@@ -12,13 +12,15 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
-  Grid
+  Grid,
+  MenuItem
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Email from '@mui/icons-material/Email';
 import Lock from '@mui/icons-material/Lock';
 import Person from '@mui/icons-material/Person';
+import Shield from '@mui/icons-material/Shield';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
@@ -37,6 +39,7 @@ const Register = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      role: 'user',
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required'),
@@ -45,6 +48,7 @@ const Register = () => {
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('password'), null], 'Passwords must match')
         .required('Required'),
+      role: Yup.string().required('Required'),
     }),
     onSubmit: async (values) => {
       dispatch(loginStart());
@@ -197,6 +201,28 @@ const Register = () => {
                 ),
               }}
             />
+
+            <TextField
+              fullWidth
+              select
+              id="role"
+              name="role"
+              label="Account Type"
+              margin="normal"
+              value={formik.values.role}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Shield color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            >
+              <MenuItem value="user">Standard User</MenuItem>
+              <MenuItem value="admin">Administrator</MenuItem>
+            </TextField>
             
             <Button
               type="submit"

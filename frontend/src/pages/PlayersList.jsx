@@ -21,7 +21,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress
+  CircularProgress,
+  Grid
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -32,7 +33,11 @@ import {
 } from '@mui/icons-material';
 import { fetchPlayers, deletePlayer, addPlayer, updatePlayer } from '../features/players/playerSlice';
 import PlayerModal from '../components/PlayerModal';
+import FilterModal from '../components/FilterModal';
+import PlayerDetailsModal from '../components/PlayerDetailsModal';
 import toast from 'react-hot-toast';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const PlayersList = () => {
   const dispatch = useDispatch();
@@ -46,11 +51,35 @@ const PlayersList = () => {
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState(null);
+  const [viewingPlayer, setViewingPlayer] = useState(null);
+  const [filters, setFilters] = useState({
+    position: '',
+    minOvr: 0,
+    team: '',
+    nation: '',
+    gender: '',
+  });
 
   useEffect(() => {
-    dispatch(fetchPlayers({ page: page + 1, limit: rowsPerPage, search: searchTerm }));
-  }, [dispatch, page, rowsPerPage, searchTerm]);
+    const params = { 
+      page: page + 1, 
+      limit: rowsPerPage, 
+      search: searchTerm,
+      ...filters
+    };
+    // Clean up empty params
+    Object.keys(params).forEach(key => {
+      if (params[key] === '' || params[key] === 0) delete params[key];
+      if (key === 'minOvr' && params[key]) {
+        params.minovr = params[key]; // Map to backend param
+        delete params.minOvr;
+      }
+    });
+    dispatch(fetchPlayers(params));
+  }, [dispatch, page, rowsPerPage, searchTerm, filters]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -64,6 +93,52 @@ const PlayersList = () => {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
     setPage(0);
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    setPage(0);
+  };
+
+  const handleOpenDetails = (player) => {
+    setViewingPlayer(player);
+    setIsDetailsOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setViewingPlayer(null);
+    setIsDetailsOpen(false);
+  };
+
+  const handleExportCSV = () => {
+    if (players.length === 0) {
+      toast.error('No data to export');
+      return;
+    }
+
+    const headers = ['Rank', 'Name', 'OVR', 'Position', 'Team', 'Nation', 'League', 'Age'];
+    const csvRows = players.map(p => [
+      p.rank,
+      `"${p.name}"`,
+      p.ovr,
+      p.position,
+      `"${p.team}"`,
+      `"${p.nation}"`,
+      `"${p.league}"`,
+      p.age
+    ].join(','));
+
+    const csvContent = [headers.join(','), ...csvRows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `EAFC26_Players_Export_${new Date().toLocaleDateString()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Exporting players as CSV...');
   };
 
   const handleDelete = async () => {
@@ -111,36 +186,55 @@ const PlayersList = () => {
         <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
           Players Dataset
         </Typography>
-        {user?.role === 'admin' && (
+        <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => handleOpenModal()}
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={handleExportCSV}
           >
-            Add New Player
+            Export CSV
           </Button>
-        )}
+          {user?.role === 'admin' && (
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => handleOpenModal()}
+            >
+              Add New Player
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <Paper sx={{ p: 2, mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <TextField
-            fullWidth
-            placeholder="Search players by name, team, or nation..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button variant="outlined" startIcon={<FilterIcon />}>
-            Filters
-          </Button>
-        </Box>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={10}>
+            <TextField
+              fullWidth
+              placeholder="Search players by name, team, or nation..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <Button 
+              fullWidth 
+              variant={Object.values(filters).some(v => v !== '' && v !== 0) ? "contained" : "outlined"} 
+              startIcon={<FilterIcon />}
+              onClick={() => setIsFilterOpen(true)}
+              sx={{ height: '56px' }}
+            >
+              Filters
+            </Button>
+          </Grid>
+        </Grid>
       </Paper>
 
       <TableContainer component={Paper}>
@@ -188,8 +282,17 @@ const PlayersList = () => {
                   <TableCell>
                     <IconButton 
                       size="small" 
+                      color="info"
+                      onClick={() => handleOpenDetails(player)}
+                      title="View Details"
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton 
+                      size="small" 
                       color="primary"
                       onClick={() => handleOpenModal(player)}
+                      title="Edit Player"
                     >
                       <EditIcon />
                     </IconButton>
@@ -198,6 +301,7 @@ const PlayersList = () => {
                         size="small" 
                         color="error"
                         onClick={() => setDeleteId(player._id)}
+                        title="Delete Player"
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -226,6 +330,21 @@ const PlayersList = () => {
         player={editingPlayer}
         onSubmit={handleModalSubmit}
         loading={loading}
+      />
+
+      {/* Player Details Modal */}
+      <PlayerDetailsModal
+        open={isDetailsOpen}
+        handleClose={handleCloseDetails}
+        player={viewingPlayer}
+      />
+
+      {/* Advanced Filters Modal */}
+      <FilterModal
+        open={isFilterOpen}
+        handleClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onApply={handleApplyFilters}
       />
 
       {/* Delete Confirmation Dialog */}

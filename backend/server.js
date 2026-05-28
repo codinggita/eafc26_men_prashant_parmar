@@ -20,6 +20,18 @@ const admin = require('./routes/adminRoutes');
 
 const app = express();
 
+// Disable ETags to avoid 304 Not Modified status codes
+app.set('etag', false);
+
+// Prevent caching to ensure fresh 200 responses
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  next();
+});
+
 // Body parser
 app.use(express.json());
 

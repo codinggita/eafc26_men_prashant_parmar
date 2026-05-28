@@ -34,8 +34,7 @@ const Settings = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Use the existing update endpoint but for current user
-      const response = await api.put(`/admin/users/${user._id}`, profileData);
+      const response = await api.put('/auth/updatedetails', profileData);
       dispatch(setUser(response.data.data));
       toast.success('Profile updated successfully');
     } catch (error) {
