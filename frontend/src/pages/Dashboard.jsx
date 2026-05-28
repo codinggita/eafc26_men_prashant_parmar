@@ -1,10 +1,8 @@
 import { Grid, Paper, Typography, Box } from '@mui/material';
-import { 
-  People as PeopleIcon, 
-  SportsSoccer as SoccerIcon, 
-  TrendingUp as TrendingIcon,
-  Update as UpdateIcon 
-} from '@mui/icons-material';
+import PeopleIcon from '@mui/icons-material/People';
+import SoccerIcon from '@mui/icons-material/SportsSoccer';
+import TrendingIcon from '@mui/icons-material/TrendingUp';
+import UpdateIcon from '@mui/icons-material/Update';
 
 const StatCard = ({ title, value, icon, color }) => (
   <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 140 }}>

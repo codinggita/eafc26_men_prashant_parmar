@@ -16,19 +16,17 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  ChevronLeft as ChevronLeftIcon,
-  Dashboard as DashboardIcon,
-  People as PeopleIcon,
-  SportsSoccer as SoccerIcon,
-  BarChart as ChartIcon,
-  Settings as SettingsIcon,
-  Person as PersonIcon,
-  Logout as LogoutIcon,
-  Brightness4 as DarkModeIcon,
-  Brightness7 as LightModeIcon
-} from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import SoccerIcon from '@mui/icons-material/SportsSoccer';
+import ChartIcon from '@mui/icons-material/BarChart';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DarkModeIcon from '@mui/icons-material/Brightness4';
+import LightModeIcon from '@mui/icons-material/Brightness7';
 import { toggleSidebar, toggleTheme } from '../features/ui/uiSlice';
 import { logout } from '../features/auth/authSlice';
 import { useNavigate, useLocation } from 'react-router-dom';
