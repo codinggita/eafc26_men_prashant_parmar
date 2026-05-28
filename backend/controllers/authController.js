@@ -105,6 +105,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({
       success: true,
+      message: 'Authentication successful',
       token
     });
 };

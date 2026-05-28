@@ -87,6 +87,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: 'Players fetched successfully',
     count: players.length,
     total,
     pagination,
@@ -109,6 +110,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: 'Player details fetched successfully',
     data: player
   });
 });
@@ -120,6 +122,7 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
   const player = await Player.create(req.body);
   res.status(201).json({
     success: true,
+    message: 'Player created successfully',
     data: player
   });
 });
