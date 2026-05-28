@@ -1,7 +1,8 @@
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
+const getCustomTheme = (mode) => createTheme({
   palette: {
+    mode,
     primary: {
       main: '#1976d2',
     },
@@ -9,7 +10,8 @@ const theme = createTheme({
       main: '#dc004e',
     },
     background: {
-      default: '#f4f6f8',
+      default: mode === 'light' ? '#f4f6f8' : '#121212',
+      paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
     },
   },
   typography: {
@@ -28,7 +30,14 @@ const theme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
   },
 });
 
-export default theme;
+export default getCustomTheme;

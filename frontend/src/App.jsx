@@ -20,6 +20,7 @@ const PlayersList = lazy(() => import('./pages/PlayersList'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const UsersManagement = lazy(() => import('./pages/UsersManagement'));
 const Profile = lazy(() => import('./pages/Profile'));
+const Settings = lazy(() => import('./pages/Settings'));
 const PlayerComparison = lazy(() => import('./pages/PlayerComparison'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -131,18 +132,15 @@ function App() {
           />
           
           <Route 
-            path="/settings" 
-            element={
-              <ProtectedRoute>
-                <DashboardLayout>
-                  <div className="p-4">
-                    <h2 className="text-2xl font-bold mb-4">Settings</h2>
-                    <p className="text-gray-600">Configuration and preferences panel coming soon.</p>
-                  </div>
-                </DashboardLayout>
-              </ProtectedRoute>
-            } 
-          />
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } 
+        />
 
           {/* 404 Route */}
           <Route path="*" element={<div className="flex items-center justify-center min-h-screen">404 - Page Not Found</div>} />
