@@ -4,7 +4,7 @@ const initialState = {
   theme: localStorage.getItem('theme') || 'light',
   sidebarOpen: true,
   notifications: [],
-};
+};   
 
 const uiSlice = createSlice({
   name: 'ui',

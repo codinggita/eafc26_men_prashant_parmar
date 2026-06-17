@@ -70,12 +70,12 @@ const PlayerComparison = () => {
 
       // Format data for Radar Chart
       const stats = [
-        { subject: 'Pace', p1: player1.pace || 0, p2: player2.pace || 0 },
-        { subject: 'Shooting', p1: player1.shooting || 0, p2: player2.shooting || 0 },
-        { subject: 'Passing', p1: player1.passing || 0, p2: player2.passing || 0 },
-        { subject: 'Dribbling', p1: player1.dribbling || 0, p2: player2.dribbling || 0 },
-        { subject: 'Defending', p1: player1.defending || 0, p2: player2.defending || 0 },
-        { subject: 'Physical', p1: player1.physical || 0, p2: player2.physical || 0 },
+        { subject: 'Pace', p1: parseInt(player1.PAC) || 0, p2: parseInt(player2.PAC) || 0 },
+        { subject: 'Shooting', p1: parseInt(player1.SHO) || 0, p2: parseInt(player2.SHO) || 0 },
+        { subject: 'Passing', p1: parseInt(player1.PAS) || 0, p2: parseInt(player2.PAS) || 0 },
+        { subject: 'Dribbling', p1: parseInt(player1.DRI) || 0, p2: parseInt(player2.DRI) || 0 },
+        { subject: 'Defending', p1: parseInt(player1.DEF) || 0, p2: parseInt(player2.DEF) || 0 },
+        { subject: 'Physical', p1: parseInt(player1.PHY) || 0, p2: parseInt(player2.PHY) || 0 },
       ];
       setChartData(stats);
     } catch (error) {
@@ -85,19 +85,23 @@ const PlayerComparison = () => {
     }
   };
 
-  const renderStatRow = (label, val1, val2) => (
-    <TableRow hover>
-      <TableCell align="right" sx={{ width: '40%', fontWeight: val1 > val2 ? 'bold' : 'normal', color: val1 > val2 ? 'primary.main' : 'inherit' }}>
-        {val1}
-      </TableCell>
-      <TableCell align="center" sx={{ width: '20%', fontWeight: 'bold', bgcolor: 'grey.100' }}>
-        {label}
-      </TableCell>
-      <TableCell align="left" sx={{ width: '40%', fontWeight: val2 > val1 ? 'bold' : 'normal', color: val2 > val1 ? 'secondary.main' : 'inherit' }}>
-        {val2}
-      </TableCell>
-    </TableRow>
-  );
+  const renderStatRow = (label, val1, val2) => {
+    const num1 = parseInt(val1) || 0;
+    const num2 = parseInt(val2) || 0;
+    return (
+      <TableRow hover>
+        <TableCell align="right" sx={{ width: '40%', fontWeight: num1 > num2 ? 'bold' : 'normal', color: num1 > num2 ? 'primary.main' : 'inherit' }}>
+          {val1}
+        </TableCell>
+        <TableCell align="center" sx={{ width: '20%', fontWeight: 'bold', bgcolor: 'grey.100' }}>
+          {label}
+        </TableCell>
+        <TableCell align="left" sx={{ width: '40%', fontWeight: num2 > num1 ? 'bold' : 'normal', color: num2 > num1 ? 'secondary.main' : 'inherit' }}>
+          {val2}
+        </TableCell>
+      </TableRow>
+    );
+  };
 
   return (
     <Box className="animate-fade-in">
@@ -114,7 +118,7 @@ const PlayerComparison = () => {
           <Grid item xs={12} md={5}>
             <Autocomplete
               options={playerOptions}
-              getOptionLabel={(option) => `${option.name} (${option.ovr}) - ${option.team}`}
+              getOptionLabel={(option) => `${option.Name} (${option.OVR}) - ${option.Team}`}
               value={selectedP1}
               onChange={(event, newValue) => setSelectedP1(newValue)}
               renderInput={(params) => <TextField {...params} label="Select First Player" variant="outlined" />}
@@ -126,7 +130,7 @@ const PlayerComparison = () => {
           <Grid item xs={12} md={5}>
             <Autocomplete
               options={playerOptions}
-              getOptionLabel={(option) => `${option.name} (${option.ovr}) - ${option.team}`}
+              getOptionLabel={(option) => `${option.Name} (${option.OVR}) - ${option.Team}`}
               value={selectedP2}
               onChange={(event, newValue) => setSelectedP2(newValue)}
               renderInput={(params) => <TextField {...params} label="Select Second Player" variant="outlined" />}
@@ -158,14 +162,14 @@ const PlayerComparison = () => {
                   <PolarAngleAxis dataKey="subject" />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} />
                   <Radar
-                    name={comparisonData.player1.name}
+                    name={comparisonData.player1.Name}
                     dataKey="p1"
                     stroke="#1976d2"
                     fill="#1976d2"
                     fillOpacity={0.6}
                   />
                   <Radar
-                    name={comparisonData.player2.name}
+                    name={comparisonData.player2.Name}
                     dataKey="p2"
                     stroke="#dc004e"
                     fill="#dc004e"
@@ -184,30 +188,30 @@ const PlayerComparison = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                 <Box sx={{ textAlign: 'center', flex: 1 }}>
                   <Avatar sx={{ width: 60, height: 60, mx: 'auto', mb: 1, bgcolor: 'primary.main' }}>
-                    {comparisonData.player1.ovr}
+                    {comparisonData.player1.OVR}
                   </Avatar>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{comparisonData.player1.name}</Typography>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{comparisonData.player1.Name}</Typography>
                 </Box>
                 <Box sx={{ textAlign: 'center', flex: 1 }}>
                   <Avatar sx={{ width: 60, height: 60, mx: 'auto', mb: 1, bgcolor: 'secondary.main' }}>
-                    {comparisonData.player2.ovr}
+                    {comparisonData.player2.OVR}
                   </Avatar>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{comparisonData.player2.name}</Typography>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{comparisonData.player2.Name}</Typography>
                 </Box>
               </Box>
               
               <TableContainer>
                 <Table size="small">
                   <TableBody>
-                    {renderStatRow('Overall', comparisonData.player1.ovr, comparisonData.player2.ovr)}
-                    {renderStatRow('Rank', comparisonData.player2.rank, comparisonData.player1.rank)} {/* Lower rank is better */}
-                    {renderStatRow('Pace', comparisonData.player1.pace, comparisonData.player2.pace)}
-                    {renderStatRow('Shooting', comparisonData.player1.shooting, comparisonData.player2.shooting)}
-                    {renderStatRow('Passing', comparisonData.player1.passing, comparisonData.player2.passing)}
-                    {renderStatRow('Dribbling', comparisonData.player1.dribbling, comparisonData.player2.dribbling)}
-                    {renderStatRow('Defending', comparisonData.player1.defending, comparisonData.player2.defending)}
-                    {renderStatRow('Physical', comparisonData.player1.physical, comparisonData.player2.physical)}
-                    {renderStatRow('Age', comparisonData.player2.age, comparisonData.player1.age)} {/* Younger usually preferred */}
+                    {renderStatRow('Overall', comparisonData.player1.OVR, comparisonData.player2.OVR)}
+                    {renderStatRow('Rank', comparisonData.player2.Rank, comparisonData.player1.Rank)} {/* Lower rank is better */}
+                    {renderStatRow('Pace', comparisonData.player1.PAC, comparisonData.player2.PAC)}
+                    {renderStatRow('Shooting', comparisonData.player1.SHO, comparisonData.player2.SHO)}
+                    {renderStatRow('Passing', comparisonData.player1.PAS, comparisonData.player2.PAS)}
+                    {renderStatRow('Dribbling', comparisonData.player1.DRI, comparisonData.player2.DRI)}
+                    {renderStatRow('Defending', comparisonData.player1.DEF, comparisonData.player2.DEF)}
+                    {renderStatRow('Physical', comparisonData.player1.PHY, comparisonData.player2.PHY)}
+                    {renderStatRow('Age', comparisonData.player2.Age, comparisonData.player1.Age)} {/* Younger usually preferred */}
                   </TableBody>
                 </Table>
               </TableContainer>

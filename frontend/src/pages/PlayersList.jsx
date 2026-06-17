@@ -266,19 +266,19 @@ const PlayersList = () => {
             ) : (
               players.map((player) => (
                 <TableRow key={player._id} hover>
-                  <TableCell>{player.rank}</TableCell>
-                  <TableCell sx={{ fontWeight: 'medium' }}>{player.name}</TableCell>
+                  <TableCell>{player.Rank}</TableCell>
+                  <TableCell sx={{ fontWeight: 'medium' }}>{player.Name}</TableCell>
                   <TableCell>
                     <Chip 
-                      label={player.ovr} 
-                      color={player.ovr >= 85 ? "success" : "primary"}
+                      label={player.OVR} 
+                      color={parseInt(player.OVR) >= 85 ? "success" : "primary"}
                       size="small"
                       sx={{ fontWeight: 'bold' }}
                     />
                   </TableCell>
-                  <TableCell>{player.position}</TableCell>
-                  <TableCell>{player.team}</TableCell>
-                  <TableCell>{player.nation}</TableCell>
+                  <TableCell>{player.Position}</TableCell>
+                  <TableCell>{player.Team}</TableCell>
+                  <TableCell>{player.Nation}</TableCell>
                   <TableCell>
                     <IconButton 
                       size="small" 

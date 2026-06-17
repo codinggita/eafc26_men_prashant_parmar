@@ -82,11 +82,11 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/admin/stats
 // @access  Private/Admin
 exports.getAdminStats = asyncHandler(async (req, res, next) => {
-  const totalPlayers = await Player.countDocuments({ isDeleted: false });
+  const totalPlayers = await Player.countDocuments({ isDeleted: { $ne: true } });
   const totalUsers = await User.countDocuments();
   const deletedPlayers = await Player.countDocuments({ isDeleted: true });
   
-  const latestPlayers = await Player.find({ isDeleted: false })
+  const latestPlayers = await Player.find({ isDeleted: { $ne: true } })
     .sort('-createdAt')
     .limit(5);
 

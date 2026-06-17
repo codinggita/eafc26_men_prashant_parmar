@@ -49,14 +49,14 @@ const PlayerDetailsModal = ({ open, handleClose, player }) => {
           gap: 3 
         }}>
           <Avatar sx={{ width: 80, height: 80, bgcolor: 'white', color: 'primary.main', fontSize: '2rem', fontWeight: 'bold' }}>
-            {player.ovr}
+            {player.OVR}
           </Avatar>
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{player.name}</Typography>
-            <Typography variant="subtitle1">{player.team} | {player.nation}</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{player.Name}</Typography>
+            <Typography variant="subtitle1">{player.Team} | {player.Nation}</Typography>
             <Box sx={{ mt: 1, display: 'flex', gap: 1 }}>
-              <Chip label={player.position} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} />
-              <Chip label={`${player.age} Years`} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} />
+              <Chip label={player.Position} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} />
+              <Chip label={`${player.Age} Years`} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} />
             </Box>
           </Box>
         </Box>
@@ -68,12 +68,12 @@ const PlayerDetailsModal = ({ open, handleClose, player }) => {
             <Typography variant="subtitle2" color="textSecondary" sx={{ mb: 2, fontWeight: 'bold', textTransform: 'uppercase' }}>
               Base Attributes
             </Typography>
-            <StatBar label="Pace" value={player.pace} color="#1976d2" />
-            <StatBar label="Shooting" value={player.shooting} color="#dc004e" />
-            <StatBar label="Passing" value={player.passing} color="#2e7d32" />
-            <StatBar label="Dribbling" value={player.dribbling} color="#ed6c02" />
-            <StatBar label="Defending" value={player.defending} color="#9c27b0" />
-            <StatBar label="Physical" value={player.physical} color="#795548" />
+            <StatBar label="Pace" value={parseInt(player.PAC) || 0} color="#1976d2" />
+            <StatBar label="Shooting" value={parseInt(player.SHO) || 0} color="#dc004e" />
+            <StatBar label="Passing" value={parseInt(player.PAS) || 0} color="#2e7d32" />
+            <StatBar label="Dribbling" value={parseInt(player.DRI) || 0} color="#ed6c02" />
+            <StatBar label="Defending" value={parseInt(player.DEF) || 0} color="#9c27b0" />
+            <StatBar label="Physical" value={parseInt(player.PHY) || 0} color="#795548" />
           </Grid>
           
           <Grid item xs={12} sm={6}>
@@ -82,19 +82,19 @@ const PlayerDetailsModal = ({ open, handleClose, player }) => {
             </Typography>
             <Box sx={{ mb: 2 }}>
               <Typography variant="caption" color="textSecondary">League</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.league}</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.League}</Typography>
             </Box>
             <Box sx={{ mb: 2 }}>
               <Typography variant="caption" color="textSecondary">Skill Moves</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.skillMoves} Stars</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.skillMoves || player['Skill Moves']} Stars</Typography>
             </Box>
             <Box sx={{ mb: 2 }}>
               <Typography variant="caption" color="textSecondary">Weak Foot</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.weakFoot} Stars</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.weakFoot || player['Weak Foot']} Stars</Typography>
             </Box>
             <Box sx={{ mb: 2 }}>
               <Typography variant="caption" color="textSecondary">Preferred Foot</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.foot || 'Right'}</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>{player.preferredFoot || player.foot || 'Right'}</Typography>
             </Box>
             {player.playstyles && player.playstyles.length > 0 && (
               <Box>

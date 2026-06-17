@@ -3,8 +3,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const connectDB = require('./config/db');
-const errorHandler = require('./middlewares/error');
+const connectDB = require('./src/config/db');
+const errorHandler = require('./src/middlewares/error');
 
 // Load env vars
 dotenv.config();
@@ -13,10 +13,10 @@ dotenv.config();
 connectDB();
 
 // Route files
-const players = require('./routes/playerRoutes');
-const stats = require('./routes/statsRoutes');
-const auth = require('./routes/authRoutes');
-const admin = require('./routes/adminRoutes');
+const players = require('./src/routes/playerRoutes');
+const stats = require('./src/routes/statsRoutes');
+const auth = require('./src/routes/authRoutes');
+const admin = require('./src/routes/adminRoutes');
 
 const app = express();
 
@@ -35,8 +35,22 @@ app.use((req, res, next) => {
 // Body parser
 app.use(express.json());
 
-// Enable CORS
-app.use(cors());
+// Enable CORS with specific origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5000',
+  'https://eafc26-men-prashant-parmar.onrender.com',
+  'https://resonant-rugelach-150666.netlify.app',
+  process.env.FRONTEND_URL // Add frontend URL from environment
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -50,12 +64,34 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'EA FC 26 Men API Server',
+    status: 'running',
+    version: '1.0.0'
+  });
+});
+
+// API v1 routes
+app.get('/api', (req, res) => {
+  res.json({ message: 'API v1 - Use /api/v1 endpoints' });
+});
+
 // Mount routers
 app.use('/api/v1/players', players);
 app.use('/api/v1/stats', stats);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/admin', admin);
 
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    message: 'Route not found',
+    path: req.path,
+    method: req.method
+  });
+});
 
 // Error handler middleware
 app.use(errorHandler);

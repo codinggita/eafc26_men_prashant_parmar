@@ -128,12 +128,12 @@ const Dashboard = () => {
                   <ListItem key={player._id}>
                     <ListItemAvatar>
                       <Avatar sx={{ bgcolor: 'primary.main' }}>
-                        {player.ovr}
+                        {player.OVR}
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText 
-                      primary={player.name} 
-                      secondary={`${player.team} | ${player.position}`} 
+                      primary={player.Name} 
+                      secondary={`${player.Team} | ${player.Position}`} 
                     />
                     <Typography variant="body2" color="textSecondary">
                       {new Date(player.createdAt).toLocaleDateString()}

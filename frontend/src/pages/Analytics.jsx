@@ -86,7 +86,7 @@ const Analytics = () => {
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Total Players</Typography>
-              <Typography variant="h4">{playerStats?.totalPlayers?.toLocaleString()}</Typography>
+              <Typography variant="h4">{playerStats?.totalPlayers?.toLocaleString() || 0}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -94,7 +94,7 @@ const Analytics = () => {
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Average Rating</Typography>
-              <Typography variant="h4">{Math.round(playerStats?.averageRating * 10) / 10}</Typography>
+              <Typography variant="h4">{Math.round((playerStats?.averageRating || 0) * 10) / 10}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -102,7 +102,7 @@ const Analytics = () => {
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Highest Rating</Typography>
-              <Typography variant="h4">{playerStats?.highestRating}</Typography>
+              <Typography variant="h4">{playerStats?.highestRating || 0}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -110,7 +110,7 @@ const Analytics = () => {
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>Avg Pace</Typography>
-              <Typography variant="h4">{Math.round(playerStats?.averagePace * 10) / 10}</Typography>
+              <Typography variant="h4">{Math.round((playerStats?.averagePace || 0) * 10) / 10}</Typography>
             </CardContent>
           </Card>
         </Grid>

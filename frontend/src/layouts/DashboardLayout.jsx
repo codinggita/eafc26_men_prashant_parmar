@@ -53,14 +53,18 @@ const DashboardLayout = ({ children }) => {
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Users Management', icon: <PeopleIcon />, path: '/admin/users' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
+    { text: 'Users Management', icon: <PeopleIcon />, path: '/admin/users', roles: ['admin'] },
     { text: 'Players Dataset', icon: <SoccerIcon />, path: '/players' },
     { text: 'Compare Players', icon: <CompareArrowsIcon />, path: '/compare' },
     { text: 'Analytics', icon: <ChartIcon />, path: '/analytics' },
     { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => 
+    !item.roles || item.roles.includes(user?.role)
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -150,7 +154,7 @@ const DashboardLayout = ({ children }) => {
         </Toolbar>
         <Divider />
         <List>
-          {menuItems.map((item) => (
+          {filteredMenuItems.map((item) => (
             <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => navigate(item.path)}
